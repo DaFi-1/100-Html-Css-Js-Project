@@ -33,6 +33,7 @@ This repository gathers a collection of practical projects developed for the stu
 - [20 - Animated Solar System](#20---animated-solar-system)
 - [21 - Interactive JS Carousel](#21---interactive-js-carousel)
 - [22 - JS Calculator](#22---js-calculator)
+- [23 - Fly Swatter Game](#23---fly-swatter-game)
 
 [Go to links 1-100 ↓](#-navigation-links-1-to-100)
 
@@ -191,6 +192,13 @@ This repository gathers a collection of practical projects developed for the stu
 ![Preview](22-calculadora-js/t.gif)
 🎨 **Technologies:** HTML, CSS (Bootstrap), JavaScript
 📝 Functional calculator with Bootstrap interface, JavaScript logic for basic mathematical operations (+, -, ×, ÷).
+
+---
+
+### 23 - Fly Swatter Game
+![Preview](23-jogo-mata-mosca-js/nao-sei.gif)
+🎨 **Technologies:** HTML, CSS, JavaScript
+📝 Interactive fly swatter game with lives system, countdown timer, and dynamic mosquito spawning. Uses JavaScript for game logic and DOM manipulation.
 
 ---
 
