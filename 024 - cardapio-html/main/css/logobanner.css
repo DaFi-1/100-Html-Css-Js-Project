@@ -1,0 +1,143 @@
+#main-container {
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start; /* Alinhado ao topo */
+	background-color: #f4f4f4; /* Fundo suave para a página inteira */
+}
+
+#secundary-container {
+	width: 100%;
+	max-width: 900px; /* Largura máxima para telas grandes */
+	border: 1px solid #e0e0e0;
+	background-color: #ffffff;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra suave */
+	margin: 20px; /* Espaçamento das bordas da tela */
+}
+
+.perfil-logo {
+	width: 100%;
+	height: auto; /* Altura flexível */
+}
+
+.logo {
+	width: 100%;
+	height: 0;
+	padding-bottom: 50%; /* Proporção 2:1 para o banner, ajustável */
+	background-color: #000000;
+	background-image: url(../image/definitivo.png);
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	position: relative;
+}
+
+.logo-status {
+	width: auto; /* Largura automática */
+	padding: 8px 15px;
+	height: auto;
+	border-radius: 8px;
+	border: 1px solid #D5D5D5;
+	background-color: #F5F5F5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 10px;
+	font-weight: 600;
+	transition: background-color 0.3s ease;
+}
+
+.logo-status:hover {
+	background-color: #e9e9e9;
+}
+
+.perfil {
+	width: 100%;
+	height: auto;
+	display: flex;
+	flex-wrap: wrap; /* Permite que os itens quebrem linha em telas menores */
+	padding: 0 20px;
+	align-items: center;
+}
+
+.perfil-foto {
+	width: 130px;
+	height: 130px;
+	border-radius: 50%; /* Foto de perfil redonda */
+	position: relative;
+	margin-top: -65px; /* Metade da altura para sobrepor o banner */
+	background-color: orange;
+	background-image: url(../image/minilogo.jpeg);
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	border: 4px solid #ffffff; /* Borda para destacar a foto */
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.perfil-text {
+	height: auto;
+	font-size: 14px;
+	margin-left: 20px;
+	margin-top: 10px;
+	flex-grow: 1; /* Permite que o texto ocupe o espaço disponível */
+}
+
+.perfil-text h1 {
+	font-size: 28px;
+}
+
+.perfil-text-zap {
+	width: auto;
+	height: auto;
+	margin-left: 15px;
+	margin-top: 14px;
+	cursor: pointer;
+}
+
+.perfil-text-zap img {
+	transition: transform 0.2s ease;
+}
+
+.perfil-text-zap img:hover {
+	transform: scale(1.15);
+}
+
+.delivery-time {
+	width: auto;
+	padding: 8px 12px;
+	border-radius: 8px;
+	border: 1px solid #D5D5D5;
+	background-color: #F5F5F5;
+	display: flex;
+	align-items: center;
+	margin-top: 8px;
+}
+
+/* Media Query para telas menores */
+@media (max-width: 768px) {
+	.perfil {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		padding-bottom: 20px;
+	}
+
+	.perfil-foto {
+		margin-top: -65px;
+	}
+
+	.perfil-text {
+		margin-left: 0;
+		width: 100%;
+	}
+
+	.perfil-text h1 {
+		justify-content: center;
+	}
+
+	.delivery-time {
+		margin-left: auto;
+		margin-right: auto;
+	}
+}

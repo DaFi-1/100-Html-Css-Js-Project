@@ -1,0 +1,147 @@
+#lista-compras {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 30px auto; /* Centraliza a lista */
+  width: 100%;
+  max-width: 600px; /* Aumenta a largura máxima */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+#lista-compras h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 22px;
+  font-weight: 700;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+  text-align: center;
+}
+#itens-lista {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+}
+#itens-lista li {
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border-left: 5px solid #007bff; /* Cor de destaque */
+  border-radius: 8px;
+  font-size: 16px;
+  color: #444;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#enviar-whatsapp {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #25D366; /* Cor oficial do WhatsApp */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+#enviar-whatsapp:hover {
+  background-color: #1EBE57;
+  transform: scale(1.02);
+}
+#endereco-entrega{
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+}
+#warning {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #e53935;
+  border-left: 6px solid #e53935;
+  background-color: #fdecea;
+  border-radius: 4px;
+  font-family: Ubuntu;
+  color: #b71c1c;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  animation: pulseWarning 2.5s ease-in-out infinite;
+  font-size: 20px; /* ⬅ Aumentado aqui */
+}
+
+#banner-warning-titulo {
+  display: flex;
+  align-items: center;
+  font-size: 20px; /* ⬅ Também aumentado */
+}
+
+#banner-warning-titulo img {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+@keyframes pulseWarning {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(229, 57, 53, 0.4);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 10px rgba(229, 57, 53, 0.6);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(229, 57, 53, 0.4);
+  }
+}
+
+
+.form-group {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  font-family: Ubuntu;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-size: 20px;
+  color: #333;
+}
+
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 20px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input[type="text"]:focus {
+  border-color: #4285f4;
+  box-shadow: 0 0 4px rgba(66, 133, 244, 0.3);
+  outline: none;
+}
+
+/* 📱 Aumenta fonte em telas pequenas */
+@media (max-width: 600px) {
+  .form-group label {
+    font-size: 18px;
+  }
+
+  .form-group input[type="text"] {
+    font-size: 17px;
+    padding: 12px 14px;
+  }
+}
+
