@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; scrollbar-width: none; -ms-overflow-style: none; }
+        *::-webkit-scrollbar { display: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        /* Blur no fundo quando modal aberto */
+        body.modal-aberto .banner img,
+        body.modal-aberto .topicos-cardapio,
+        body.modal-aberto .lista-produtos,
+        body.modal-aberto .btn-carrinho { filter: blur(3px); transition: filter 0.3s ease; }
+        body.modal-aberto .banner img { filter: blur(4px); }
+
+        /* Banner */
+        .banner { width: 100%; height: 60vh; position: relative; overflow: hidden; z-index: 1; }
+        .banner img { width: 100%; height: 100%; object-fit: cover; }
+        .banner .overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, #fff 100%); }
+
+        /* Conteúdo */
+        .conteudo { width: 100%; background-color: #fff; padding: 40px 20px; }
+        .logo-area { display: flex; align-items: center; gap: 20px; margin-top: -60px; position: relative; z-index: 3; }
+        .titulo-area { display: flex; align-items: center; justify-content: space-between; flex: 1; }
+        .titulo-coluna { display: flex; flex-direction: column; gap: 4px; }
+
+        /* Ícones SVG base */
+        svg:not(.veiculo-svg) { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .icon-sm { width: 16px; height: 16px; }
+        .icon-md { width: 18px; height: 18px; flex-shrink: 0; }
+        .icon-lg { width: 22px; height: 22px; }
+
+        /* Info entrega */
+        .entrega-info { display: flex; align-items: center; gap: 6px; color: #888; font-size: 0.85rem; }
+        .entrega-info svg { stroke: #888; }
+
+        /* Status aberto */
+        .status-aberto {
+            background-color: rgba(45,156,60,0.15); color: #2d9c3c;
+            padding: 4px 14px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 6px;
+            border: 1.5px solid #2d9c3c; animation: pulsar-aberto 2s ease-in-out infinite;
+        }
+        .status-aberto svg { width: 14px; height: 14px; stroke: #2d9c3c; }
+        @keyframes pulsar-aberto {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(45,156,60,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(45,156,60,0); }
+        }
+
+        /* Logo */
+        .logo {
+            width: 100px; height: 100px; border-radius: 50%; background-color: #e63946;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            border: 3px solid white; box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+        .logo span { color: white; font-size: 2rem; font-weight: bold; }
+        .titulo-area h1 { display: flex; align-items: center; gap: 8px; }
+
+        /* Verificado */
+        .icon-verificado {
+            width: 22px; height: 22px; background-color: #1da1f2; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .icon-verificado svg { width: 14px; height: 14px; stroke: white; }
+
+        /* Redes sociais */
+        .redes-sociais { display: flex; gap: 12px; margin-top: 20px; }
+        .rede-social {
+            width: 44px; height: 44px; border-radius: 12px; background-color: #f5f5f5;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: background-color 0.2s;
+        }
+        .rede-social:hover { background-color: #e0e0e0; }
+        .rede-social svg { width: 20px; height: 20px; fill: #555; }
+
+        /* Info comércio */
+        .info-comercio { margin-top: 20px; display: flex; align-items: center; gap: 20px; }
+        .info-item { display: flex; align-items: center; gap: 8px; color: #555; font-size: 0.9rem; }
+        .info-item svg { stroke: #555; }
+
+        /* Tópicos */
+        .topicos-cardapio { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .topico { background-color: #f0f0f0; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; color: #555; font-weight: 500; }
+
+        /* Botão carrinho */
+        .btn-carrinho {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background-color: #e63946; color: white; border: none; padding: 14px 28px;
+            border-radius: 30px; font-size: 1rem; font-weight: 600;
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            box-shadow: 0 6px 20px rgba(230,57,70,0.4); z-index: 100; transition: all 0.3s ease;
+        }
+        .btn-carrinho:hover { background-color: #c12f3b; box-shadow: 0 8px 25px rgba(230,57,70,0.5); transform: translateX(-50%) translateY(-2px); }
+        .btn-carrinho svg { width: 20px; height: 20px; stroke: white; }
+        .btn-carrinho .badge {
+            background-color: white; color: #e63946; width: 22px; height: 22px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 700;
+        }
+
+        /* Modais - base compartilhada */
+        .modal-overlay {
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.5); z-index: 200;
+            display: flex; align-items: flex-end; justify-content: center;
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.ativo { opacity: 1; visibility: visible; pointer-events: auto; }
+        .modal-overlay.ativo .modal-carrinho,
+        .modal-overlay.ativo .modal-quantidade { transform: translateY(0); }
+
+        .modal-carrinho, .modal-quantidade {
+            background-color: white; border-radius: 20px 20px 0 0;
+            transform: translateY(100%); transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal-carrinho { width: 100%; max-width: 500px; max-height: 70vh; padding: 24px; }
+        .modal-quantidade { width: 90%; max-width: 360px; padding: 0; max-height: 85vh; }
+
+        /* Modal carrinho */
+        .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .modal-header h2 { font-size: 1.2rem; color: #333; display: flex; align-items: center; gap: 6px; }
+        .modal-header h2 svg { width: 22px; height: 22px; stroke: #333; }
+        .btn-fechar {
+            width: 32px; height: 32px; border-radius: 50%; border: none;
+            background-color: #f0f0f0; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: background-color 0.2s;
+        }
+        .btn-fechar:hover { background-color: #e0e0e0; }
+        .btn-fechar svg { width: 16px; height: 16px; stroke: #555; }
+
+        .item-carrinho { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .item-carrinho:last-child { border-bottom: none; }
+        .item-img {
+            width: 50px; height: 50px; border-radius: 10px; background-color: #f5f5f5;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .item-img svg { width: 24px; height: 24px; stroke: #888; }
+        .item-info { flex: 1; }
+        .item-info h4 { font-size: 0.9rem; color: #333; margin-bottom: 2px; }
+        .item-info span { font-size: 0.8rem; color: #888; }
+        .item-preco { font-size: 0.95rem; font-weight: 600; color: #e63946; }
+
+        .btn-excluir-item {
+            width: 30px; height: 30px; border-radius: 50%; border: none;
+            background-color: #f5f5f5; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; flex-shrink: 0;
+        }
+        .btn-excluir-item:hover { background-color: #e63946; }
+        .btn-excluir-item:hover svg { stroke: white; }
+        .btn-excluir-item svg { width: 14px; height: 14px; stroke: #888; }
+
+        .modal-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+        .modal-footer .total { font-size: 1.1rem; font-weight: 700; color: #333; margin-bottom: 12px; }
+        .modal-footer .total span { color: #e63946; }
+
+        .inputs-carrinho { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        .input-carrinho {
+            width: 100%; padding: 12px 14px; border: 1.5px solid #e0e0e0; border-radius: 12px;
+            font-size: 0.9rem; color: #333; outline: none; transition: border-color 0.2s; font-family: inherit;
+        }
+        .input-carrinho::placeholder { color: #aaa; }
+        .input-carrinho:focus { border-color: #e63946; }
+
+        .botoes-footer { display: flex; gap: 10px; }
+
+        /* Botões de ação compartilhados */
+        .btn-acao {
+            padding: 12px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-acao svg { width: 16px; height: 16px; stroke: currentColor; }
+        .btn-excluir-todos { flex: 1; background-color: #f5f5f5; color: #e63946; border: 1.5px solid #e63946; transition: all 0.2s; }
+        .btn-excluir-todos:hover { background-color: #e63946; color: white; }
+        .btn-whatsapp { flex: 1.5; background-color: #25d366; color: white; border: none; transition: background-color 0.2s; }
+        .btn-whatsapp:hover { background-color: #1da851; }
+        .btn-whatsapp svg { width: 18px; height: 18px; fill: white; }
+
+        /* Produtos */
+        .lista-produtos { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 24px; }
+        .card-produto {
+            background-color: #fff; border-radius: 14px; overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-produto:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+        .card-produto-img {
+            width: 100%; height: 140px; background-color: #f5f5f5;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .card-produto-img svg { width: 60px; height: 60px; stroke: #bbb; stroke-width: 1.5; }
+        .card-produto-info { padding: 16px; }
+        .card-produto-info h4 { font-size: 1rem; color: #333; margin-bottom: 6px; }
+        .card-produto-info .preco { font-size: 1.1rem; font-weight: 700; color: #e63946; }
+        .card-produto-info .descricao { font-size: 0.8rem; color: #888; margin-top: 4px; line-height: 1.3; }
+
+        .btn-adicionar-card {
+            width: 100%; margin-top: 10px; padding: 8px; background-color: #e63946; color: white;
+            border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: background-color 0.2s;
+        }
+        .btn-adicionar-card:hover { background-color: #c12f3b; }
+
+        /* Modal quantidade - overlay separado */
+        .modal-quantidade-overlay {
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.5); z-index: 300;
+            display: flex; align-items: flex-end; justify-content: center;
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-quantidade-overlay.ativo { opacity: 1; visibility: visible; pointer-events: auto; }
+        .modal-quantidade-overlay.ativo .modal-quantidade { transform: translateY(0); }
+
+        .modal-qtd-img {
+            width: 100%; height: 160px; background-color: #f5f5f5;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-qtd-img svg { width: 70px; height: 70px; stroke: #bbb; stroke-width: 1.5; }
+        .modal-qtd-corpo { padding: 20px; }
+        .modal-qtd-corpo h3 { font-size: 1.1rem; color: #333; margin-bottom: 4px; }
+        .modal-qtd-corpo .preco-modal { font-size: 1.1rem; font-weight: 700; color: #e63946; margin-bottom: 4px; }
+        .modal-qtd-corpo .desc-modal { font-size: 0.8rem; color: #888; line-height: 1.3; margin-bottom: 16px; }
+
+        /* Checkboxes */
+        .opcoes-titulo { font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .opcoes-checklist { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+        .opcao-check {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+            background-color: #fafafa; border-radius: 10px; cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.15s ease;
+            position: relative; overflow: hidden;
+        }
+        .opcao-check::before {
+            content: ''; position: absolute; inset: 0;
+            background-color: rgba(45,156,60,0.1); transform: scaleX(0);
+            transform-origin: left; transition: transform 0.35s ease; z-index: 0;
+        }
+        .opcao-check input[type="checkbox"]:checked ~ * { position: relative; z-index: 1; }
+        .opcao-check:has(input:checked)::before { transform: scaleX(1); }
+        .opcao-check:has(input:checked) { background-color: rgba(45,156,60,0.08); }
+        .opcao-check:active { transform: scale(0.98); }
+        .opcao-check:hover { background-color: #f0f0f0; }
+        .opcao-check input[type="checkbox"] { display: none; }
+
+        .check-custom {
+            width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 5px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; position: relative; overflow: hidden; transition: border-color 0.2s;
+        }
+        .check-custom::before {
+            content: ''; position: absolute; inset: 0;
+            background-color: #2d9c3c; transform: scaleX(0);
+            transform-origin: left; transition: transform 0.3s ease; z-index: 0;
+        }
+        .opcao-check input:checked + .check-custom { border-color: #2d9c3c; }
+        .opcao-check input:checked + .check-custom::before { transform: scaleX(1); }
+        .check-custom svg {
+            width: 12px; height: 12px; stroke: white; stroke-width: 3;
+            opacity: 0; position: relative; z-index: 1; transition: opacity 0.15s ease 0.15s;
+        }
+        .opcao-check input:checked + .check-custom svg { opacity: 1; }
+        .opcao-label { font-size: 0.9rem; color: #333; flex: 1; }
+        .opcao-preco { font-size: 0.8rem; color: #888; }
+
+        /* Quantidade */
+        .quantidade-controle { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 20px; }
+        .btn-qtd {
+            width: 44px; height: 44px; border: none; background-color: #f0f0f0;
+            font-size: 1.3rem; font-weight: 600; color: #333;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s;
+        }
+        .btn-qtd:hover { background-color: #e0e0e0; }
+        .btn-qtd.menos { border-radius: 12px 0 0 12px; }
+        .btn-qtd.mais { border-radius: 0 12px 12px 0; }
+        .btn-qtd.mais:active { background-color: #2d9c3c; color: white; }
+        .btn-qtd.menos:active { background-color: #e63946; color: white; }
+
+        .qtd-valor {
+            width: 50px; height: 44px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 700; color: #333; background-color: #fafafa;
+            border-top: 1.5px solid #f0f0f0; border-bottom: 1.5px solid #f0f0f0;
+            transition: transform 0.15s ease, color 0.15s ease;
+        }
+
+        @keyframes flutuar { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-30px); opacity: 0; } }
+
+        .btn-confirmar-add {
+            width: 100%; padding: 14px; background-color: #2d9c3c; color: white;
+            border: none; border-radius: 14px; font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: background-color 0.2s;
+        }
+        .btn-confirmar-add:hover { background-color: #248a32; }
+
+        .textarea-obs {
+            width: 100%; padding: 10px 12px; border: 1.5px solid #e0e0e0; border-radius: 10px;
+            font-size: 0.85rem; color: #333; resize: none; outline: none;
+            font-family: inherit; transition: border-color 0.2s; margin-bottom: 16px;
+        }
+        .textarea-obs::placeholder { color: #aaa; }
+        .textarea-obs:focus { border-color: #e63946; }
+
+        .footer-qtd-add { display: flex; gap: 10px; align-items: center; }
+        .footer-qtd-add .quantidade-controle { margin-bottom: 0; flex-shrink: 0; }
+        .footer-qtd-add .btn-confirmar-add { flex: 1; }
+
+        .total-modal-item { font-size: 1.1rem; font-weight: 700; color: #333; padding: 12px 0; border-top: 1px solid #f0f0f0; margin-bottom: 12px; }
+        .total-modal-item span { color: #e63946; }
+
+        .animacao-add {
+            position: fixed; width: 60px; height: 60px; background-color: #e63946;
+            border-radius: 50%; z-index: 500; pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.8s cubic-bezier(0.25,0.1,0.25,1); opacity: 1;
+            box-shadow: 0 4px 20px rgba(230,57,70,0.5);
+        }
+        .animacao-add svg { width: 28px; height: 28px; stroke: white; }
+    </style>
+</head>
+<body>
+    <section class="banner">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200" alt="Banner">
+        <div class="overlay"></div>
+    </section>
+
+    <section class="conteudo">
+        <div class="logo-area">
+            <div class="logo"><span>M</span></div>
+            <div class="titulo-area">
+                <div class="titulo-coluna">
+                    <h1>Meu Site <svg style="width:20px;height:20px;" viewBox="0 0 24 24"><path fill="#1da1f2" d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.34 2.19c-1.39-.46-2.9-.2-3.91.81s-1.27 2.52-.81 3.91C2.63 9.33 1.75 10.57 1.75 12s.88 2.67 2.19 3.34c-.46 1.39-.2 2.9.81 3.91s2.52 1.27 3.91.81c.66 1.31 1.91 2.19 3.34 2.19s2.67-.88 3.34-2.19c1.39.46 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.04 4.3l-4.15-4.15 1.46-1.46 2.69 2.69 5.75-5.75 1.46 1.46-7.21 7.21z"/></svg></h1>
+                    <div class="entrega-info">
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                        <span>30m - 1h</span>
+                        <span style="color:#ccc;">|</span>
+                        <svg class="icon-sm" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                        <span>(11) 99999-9999</span>
+                    </div>
+                </div>
+                <span class="status-aberto"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Aberto</span>
+            </div>
+        </div>
+
+        <div class="redes-sociais">
+            <div class="rede-social"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div>
+            <div class="rede-social"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></div>
+            <div class="rede-social"><svg viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></div>
+            <div class="rede-social"><svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z"/></svg></div>
+        </div>
+
+        <div class="info-comercio">
+            <div class="info-item">
+                <svg class="icon-md" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Seg - Sex: 08h - 22h | Sab - Dom: 10h - 23h</span>
+            </div>
+        </div>
+
+        <div class="topicos-cardapio">
+            <span class="topico">Hamburguer</span>
+            <span class="topico">Pizza</span>
+            <span class="topico">Japones</span>
+            <span class="topico">Marmitex</span>
+            <span class="topico">Açaí</span>
+            <span class="topico">Lanches</span>
+        </div>
+
+        <div class="lista-produtos">
+            <div class="card-produto">
+                <div class="card-produto-img">
+                    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0110 10c0 8-10 12-10 12S2 20 2 12A10 10 0 0112 2z"/></svg>
+                </div>
+                <div class="card-produto-info">
+                    <h4>Hamburguer Especial</h4>
+                    <span class="preco">R$ 28,90</span>
+                    <p class="descricao">Pão brioche, hambúrguer artesanal 180g, queijo cheddar, alface, tomaze molho especial da casa.</p>
+                    <button class="btn-adicionar-card" onclick="abrirQtd(this, 'Hamburguer Especial', 28.90)">Adicionar</button>
+                </div>
+            </div>
+            <div class="card-produto">
+                <div class="card-produto-img">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
+                </div>
+                <div class="card-produto-info">
+                    <h4>Pizza Margherita</h4>
+                    <span class="preco">R$ 45,00</span>
+                    <p class="descricao">Massa fina crocante, molho de tomate San Marzano, mussarela de búfala, manjericão fresco e azeite.</p>
+                    <button class="btn-adicionar-card" onclick="abrirQtd(this, 'Pizza Margherita', 45.00)">Adicionar</button>
+                </div>
+            </div>
+            <div class="card-produto">
+                <div class="card-produto-img">
+                    <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                </div>
+                <div class="card-produto-info">
+                    <h4>Milkshake</h4>
+                    <span class="preco">R$ 18,00</span>
+                    <p class="descricao">Batido na hora com sorvete artesanal. Sabores: chocolate, morango, baunilha ou nutella.</p>
+                    <button class="btn-adicionar-card" onclick="abrirQtd(this, 'Milkshake', 18.00)">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal-quantidade-overlay" id="modalQtd" onclick="fecharQtd(event)">
+        <div class="modal-quantidade" onclick="event.stopPropagation()">
+            <div class="modal-qtd-img">
+                <svg id="svgProdutoModal" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0110 10c0 8-10 12-10 12S2 20 2 12A10 10 0 0112 2z"/></svg>
+            </div>
+            <div class="modal-qtd-corpo">
+                <h3 id="nomeProdutoModal">Produto</h3>
+                <div class="preco-modal" id="precoProdutoModal">R$ 0,00</div>
+                <p class="desc-modal" id="descProdutoModal"></p>
+                <div class="opcoes-titulo">Opcionais</div>
+                <div class="opcoes-checklist">
+                    <label class="opcao-check"><input type="checkbox" onchange="atualizarPrecoModal()"><span class="check-custom"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="opcao-label">Bacon</span><span class="opcao-preco">+R$ 3,00</span></label>
+                    <label class="opcao-check"><input type="checkbox" onchange="atualizarPrecoModal()"><span class="check-custom"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="opcao-label">Cheddar</span><span class="opcao-preco">+R$ 2,00</span></label>
+                    <label class="opcao-check"><input type="checkbox" onchange="atualizarPrecoModal()"><span class="check-custom"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="opcao-label">Onion Rings</span><span class="opcao-preco">+R$ 4,00</span></label>
+                    <label class="opcao-check"><input type="checkbox" onchange="atualizarPrecoModal()"><span class="check-custom"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span class="opcao-label">Ovo</span><span class="opcao-preco">+R$ 2,00</span></label>
+                </div>
+                <textarea class="textarea-obs" id="obsProduto" rows="2" placeholder="Observações (ex: sem cebola, bem passado...)"></textarea>
+                <div class="total-modal-item">Total: <span id="totalItemModal">R$ 28,90</span></div>
+                <div class="footer-qtd-add">
+                    <div class="quantidade-controle">
+                        <button class="btn-qtd menos" onclick="mudarQtd(-1)">-</button>
+                        <div class="qtd-valor" id="qtdValor">1</div>
+                        <button class="btn-qtd mais" onclick="mudarQtd(1)">+</button>
+                    </div>
+                    <button class="btn-confirmar-add" onclick="confirmarAdd()">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-carrinho" onclick="abrirCarrinho()">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Carrinho
+        <span class="badge">3</span>
+    </button>
+
+    <div class="modal-overlay" id="modalCarrinho" onclick="fecharCarrinho(event)">
+        <div class="modal-carrinho" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> Meu Carrinho</h2>
+                <button class="btn-fechar" onclick="fecharCarrinho()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <div class="item-carrinho">
+                <div class="item-img"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0110 10c0 8-10 12-10 12S2 20 2 12A10 10 0 0112 2z"/></svg></div>
+                <div class="item-info"><h4>Hamburguer Especial</h4><span>1x</span></div>
+                <span class="item-preco">R$ 28,90</span>
+                <button class="btn-excluir-item" onclick="excluirItem(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+            </div>
+            <div class="item-carrinho">
+                <div class="item-img"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg></div>
+                <div class="item-info"><h4>Pizza Margherita</h4><span>1x</span></div>
+                <span class="item-preco">R$ 45,00</span>
+                <button class="btn-excluir-item" onclick="excluirItem(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+            </div>
+            <div class="item-carrinho">
+                <div class="item-img"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+                <div class="item-info"><h4>Milkshake</h4><span>1x</span></div>
+                <span class="item-preco">R$ 18,00</span>
+                <button class="btn-excluir-item" onclick="excluirItem(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+            </div>
+            <div class="modal-footer">
+                <div class="total">Total: <span>R$ 91,90</span></div>
+                <div class="inputs-carrinho">
+                    <input type="text" class="input-carrinho" id="nomeCliente" placeholder="Seu nome">
+                    <input type="text" class="input-carrinho" id="enderecoCliente" placeholder="Endereço de entrega">
+                </div>
+                <div class="botoes-footer">
+                    <button class="btn-acao btn-excluir-todos" onclick="excluirTodos()"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Excluir Todos</button>
+                    <button class="btn-acao btn-whatsapp" onclick="enviarWhatsApp()"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Enviar pelo WhatsApp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let produtoAtual = null, quantidadeAtual = 1, btnOrigem = null, precoBase = 0;
+        const opcoesPrecos = [3.00, 2.00, 4.00, 2.00];
+        const $ = id => document.getElementById(id);
+        const ctx = () => new (window.AudioContext || window.webkitAudioContext)();
+
+        function abrirModal(id, blur = true) {
+            $(id).classList.add('ativo');
+            document.body.style.overflow = 'hidden';
+            if (blur) document.body.classList.add('modal-aberto');
+        }
+
+        function fecharModal(id, e, blur = true) {
+            if (!e || e.target === $(id)) {
+                $(id).classList.remove('ativo');
+                document.body.style.overflow = '';
+                if (blur) document.body.classList.remove('modal-aberto');
+            }
+        }
+
+        function tocarSom(freq, ramp, dur, vol = 0.15) {
+            const c = ctx(), o = c.createOscillator(), g = c.createGain();
+            o.connect(g); g.connect(c.destination);
+            o.type = 'sine';
+            o.frequency.setValueAtTime(freq, c.currentTime);
+            o.frequency.exponentialRampToValueAtTime(ramp, c.currentTime + dur);
+            g.gain.setValueAtTime(vol, c.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.01, c.currentTime + dur);
+            o.start(c.currentTime); o.stop(c.currentTime + dur);
+        }
+
+        function abrirQtd(btn, nome, preco) {
+            btnOrigem = btn;
+            produtoAtual = { nome, preco };
+            precoBase = preco;
+            quantidadeAtual = 1;
+
+            $('nomeProdutoModal').textContent = nome;
+            $('precoProdutoModal').textContent = 'R$ ' + preco.toFixed(2).replace('.', ',');
+            $('qtdValor').textContent = '1';
+
+            const card = btn.closest('.card-produto');
+            $('svgProdutoModal').innerHTML = card.querySelector('.card-produto-img svg').innerHTML;
+
+            const desc = card.querySelector('.descricao');
+            $('descProdutoModal').textContent = desc ? desc.textContent : '';
+
+            document.querySelectorAll('#modalQtd input[type="checkbox"]').forEach(cb => cb.checked = false);
+            atualizarPrecoModal();
+            abrirModal('modalQtd');
+        }
+
+        function atualizarPrecoModal() {
+            let total = precoBase;
+            document.querySelectorAll('#modalQtd input[type="checkbox"]').forEach((cb, i) => {
+                if (cb.checked) total += opcoesPrecos[i];
+            });
+            $('precoProdutoModal').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+            $('totalItemModal').textContent = 'R$ ' + (total * quantidadeAtual).toFixed(2).replace('.', ',');
+        }
+
+        function fecharQtd(e) { fecharModal('modalQtd', e); }
+
+        function mudarQtd(delta) {
+            tocarSom(delta > 0 ? 1000 : 800, delta > 0 ? 1400 : 500, 0.08);
+            quantidadeAtual = Math.max(1, quantidadeAtual + delta);
+            $('qtdValor').textContent = quantidadeAtual;
+            atualizarPrecoModal();
+
+            const f = document.createElement('span');
+            f.textContent = delta > 0 ? '+1' : '-1';
+            f.style.cssText = `position:absolute;font-size:1rem;font-weight:700;color:${delta > 0 ? '#2d9c3c' : '#e63946'};pointer-events:none;z-index:10;animation:flutuar 0.6s ease forwards;`;
+            $('qtdValor').style.position = 'relative';
+            $('qtdValor').appendChild(f);
+            setTimeout(() => f.remove(), 600);
+        }
+
+        function confirmarAdd() {
+            tocarSom(1200, 1600, 0.15, 0.25);
+            const card = btnOrigem.closest('.card-produto');
+            const cardRect = card.getBoundingClientRect();
+            const carrinhoRect = document.querySelector('.btn-carrinho').getBoundingClientRect();
+
+            const f = card.cloneNode(true);
+            f.style.cssText = `position:fixed;left:${cardRect.left}px;top:${cardRect.top}px;width:${cardRect.width}px;height:${cardRect.height}px;z-index:500;pointer-events:none;border-radius:14px;box-shadow:0 8px 30px rgba(230,57,70,0.4);transition:all 0.7s cubic-bezier(0.25,0.1,0.25,1);opacity:1;transform:scale(1) rotate(0deg);`;
+            document.body.appendChild(f);
+            card.style.opacity = '0.3';
+
+            requestAnimationFrame(() => {
+                Object.assign(f.style, {
+                    left: carrinhoRect.left + carrinhoRect.width / 2 - 30 + 'px',
+                    top: carrinhoRect.top - 20 + 'px',
+                    width: '60px', height: '60px', borderRadius: '50%',
+                    opacity: '0', transform: 'scale(0.3) rotate(15deg)'
+                });
+            });
+
+            setTimeout(() => {
+                f.remove();
+                card.style.opacity = '1';
+                const cb = document.querySelector('.btn-carrinho');
+                cb.style.transform = 'translateX(-50%) scale(1.25)';
+                cb.style.boxShadow = '0 8px 30px rgba(230,57,70,0.6)';
+                setTimeout(() => { cb.style.transform = 'translateX(-50%)'; cb.style.boxShadow = '0 6px 20px rgba(230,57,70,0.4)'; }, 300);
+            }, 700);
+
+            const opcionalEscolhido = [];
+            let precoTotal = precoBase;
+            document.querySelectorAll('#modalQtd input[type="checkbox"]').forEach((cb, i) => {
+                if (cb.checked) { opcionalEscolhido.push(document.querySelectorAll('.opcao-label')[i].textContent); precoTotal += opcoesPrecos[i]; }
+            });
+
+            const obs = $('obsProduto').value.trim();
+            for (let i = 0; i < quantidadeAtual; i++) adicionarAoCarrinho(produtoAtual.nome, precoTotal, opcionalEscolhido, obs);
+            $('obsProduto').value = '';
+            fecharQtd();
+        }
+
+        function adicionarAoCarrinho(nome, preco, opcionais, obs) {
+            const carrinho = document.querySelector('.modal-carrinho');
+            const textoOpcionais = opcionais.length ? ' (' + opcionais.join(', ') + ')' : '';
+            const textoObs = obs ? ' [Obs: ' + obs + ']' : '';
+            const nomeCompleto = nome + textoOpcionais + textoObs;
+
+            for (const item of carrinho.querySelectorAll('.item-carrinho')) {
+                if (item.querySelector('h4').textContent === nomeCompleto) {
+                    const qtd = item.querySelector('.item-info span');
+                    const n = parseInt(qtd.textContent) + 1;
+                    qtd.textContent = n + 'x';
+                    item.querySelector('.item-preco').textContent = 'R$ ' + (preco * n).toFixed(2).replace('.', ',');
+                    atualizarBadge();
+                    return;
+                }
+            }
+
+            const novoItem = document.createElement('div');
+            novoItem.className = 'item-carrinho';
+            novoItem.innerHTML = `<div class="item-img"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0110 10c0 8-10 12-10 12S2 20 2 12A10 10 0 0112 2z"/></svg></div><div class="item-info"><h4>${nomeCompleto}</h4><span>1x</span></div><span class="item-preco">R$ ${preco.toFixed(2).replace('.', ',')}</span><button class="btn-excluir-item" onclick="excluirItem(this)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>`;
+            carrinho.insertBefore(novoItem, document.querySelector('.modal-footer'));
+            atualizarBadge();
+        }
+
+        function abrirCarrinho() { abrirModal('modalCarrinho'); }
+        function fecharCarrinho(e) { fecharModal('modalCarrinho', e); }
+        function excluirItem(btn) { btn.closest('.item-carrinho').remove(); atualizarBadge(); }
+        function excluirTodos() { document.querySelectorAll('.item-carrinho').forEach(i => i.remove()); atualizarBadge(); }
+
+        function atualizarBadge() {
+            let t = 0;
+            document.querySelectorAll('.item-carrinho').forEach(i => t += parseInt(i.querySelector('.item-info span').textContent));
+            document.querySelector('.badge').textContent = t;
+        }
+
+        function enviarWhatsApp() {
+            let msg = 'Olá! Gostaria de fazer um pedido:\n\n';
+            const nome = $('nomeCliente').value, end = $('enderecoCliente').value;
+            if (nome) msg += `*Cliente:* ${nome}\n`;
+            if (end) msg += `*Endereço:* ${end}\n`;
+            if (nome || end) msg += '\n';
+            document.querySelectorAll('.item-carrinho').forEach(i => {
+                msg += `${i.querySelector('.item-info span').textContent} ${i.querySelector('h4').textContent} - ${i.querySelector('.item-preco').textContent}\n`;
+            });
+            msg += `\n*Total: ${document.querySelector('.modal-footer .total span').textContent}*`;
+            window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
